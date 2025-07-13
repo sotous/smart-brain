@@ -8,6 +8,8 @@ import Register from './components/Register/Register';
 import Logo from './components/Logo/Logo';
 import ImageLinkForm from './components/ImageLinkForm/ImageLinkForm';
 import Rank from './components/Rank/Rank';
+import Modal from './components/Modal/Modal';
+import Profile from './components/Profile/Profile';
 import './App.css';
 
 const initialState = {
@@ -16,12 +18,15 @@ const initialState = {
   boxes: [],
   route: 'signin',
   isSignedIn: false,
+  isProfileOpen: false,
   user: {
     id: '',
     name: '',
     email: '',
     entries: 0,
-    joined: ''
+    joined: '',
+    pet: '',
+    age: ''
   }
 }
 
@@ -32,30 +37,63 @@ class App extends Component {
     this.state = initialState;
   }
 
+  componentDidMount() {
+    const token = window.sessionStorage.getItem('token');
+    if (token) {
+      fetch('http://localhost:3000/signin', {
+        method: 'post',
+        headers: {'Content-Type': 'application/json', 'Authorization': token},
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data && data.id) {
+          fetch('http://localhost:3000/profile/' + data.id, {
+            method: 'get',
+            headers: {'Content-Type': 'application/json', 'Authorization': token}
+          })
+          .then(response => response.json())
+          .then(user => {
+            if (user && user.email) {
+              this.loadUser(user);
+              this.onRouteChange('home');
+            }
+          })
+          .catch(console.log)
+        }
+      })
+      .catch(console.log)
+    }
+  }
+
   loadUser = (data) => {
     this.setState({user: {
       id: data.id,
       name: data.name,
       email: data.email,
       entries: data.entries,
-      joined: data.joined
+      joined: data.joined,
+      pet: data.pet,
+      age: data.age
     }})
   }
 
   calculateFaceLocations = (data) => {
-    const image = document.getElementById('inputimage');
-    const width = Number(image.width);
-    const height = Number(image.height);
+    if (data && data.outputs) {
+      const image = document.getElementById('inputimage');
+      const width = Number(image.width);
+      const height = Number(image.height);
 
-    const boxes = data.outputs[0].data.regions.map(face => {
-      return {
-        leftCol: face.region_info.bounding_box.left_col * width,
-        topRow: face.region_info.bounding_box.top_row * height,
-        rightCol: width - (face.region_info.bounding_box.right_col * width),
-        bottomRow: height - (face.region_info.bounding_box.bottom_row * height)
-      }
-    });
-    return boxes;
+      const boxes = data.outputs[0].data.regions.map(face => {
+        return {
+          leftCol: face.region_info.bounding_box.left_col * width,
+          topRow: face.region_info.bounding_box.top_row * height,
+          rightCol: width - (face.region_info.bounding_box.right_col * width),
+          bottomRow: height - (face.region_info.bounding_box.bottom_row * height)
+        }
+      });
+      return boxes;
+    }
+    return [];
   }
 
   displayFaceBoxes = (boxes) => {
@@ -70,7 +108,7 @@ class App extends Component {
     this.setState({imageUrl: this.state.input});
       fetch('http://localhost:3000/imageurl', {
         method: 'post',
-        headers: {'Content-Type': 'application/json'},
+        headers: {'Content-Type': 'application/json', 'Authorization': window.sessionStorage.getItem('token')},
         body: JSON.stringify({
           input: this.state.input
         })
@@ -80,7 +118,7 @@ class App extends Component {
         if (response) {
           fetch('http://localhost:3000/image', {
             method: 'put',
-            headers: {'Content-Type': 'application/json'},
+            headers: {'Content-Type': 'application/json', 'Authorization': window.sessionStorage.getItem('token')},
             body: JSON.stringify({
               id: this.state.user.id
             })
@@ -106,12 +144,24 @@ class App extends Component {
     this.setState({route: route});
   }
 
+  toggleModal = () => {
+    this.setState(prevState => ({...prevState, isProfileOpen: !prevState.isProfileOpen}));
+  }
+
   render() {
-    const { isSignedIn, imageUrl, route, boxes } = this.state;
+    const { isSignedIn, imageUrl, route, boxes, isProfileOpen, user } = this.state;
     return (
       <div className="App">
-        <ParticlesBg type="circle" bg={true} />
-        <Navigation isSignedIn={isSignedIn} onRouteChange={this.onRouteChange} />
+        <ParticlesBg type="cobweb" bg={true} />
+        <Navigation 
+          isSignedIn={isSignedIn} 
+          onRouteChange={this.onRouteChange} 
+          toggleModal={this.toggleModal}/>
+        {isProfileOpen && (
+          <Modal>
+            <Profile isProfileOpen={isProfileOpen} toggleModal={this.toggleModal} user={user} loadUser={this.loadUser}/>
+          </Modal>
+        )}
         { route === 'home'
           ? <div>
               <Logo />
