@@ -21,6 +21,10 @@ class Register extends React.Component {
   onPasswordChange = (event) => {
     this.setState({password: event.target.value})
   }
+  
+  saveAuthTokenInSession = (token) => {
+    window.sessionStorage.setItem('token', token);
+  };
 
   onSubmitSignIn = () => {
     fetch('http://localhost:3000/register', {
@@ -35,6 +39,7 @@ class Register extends React.Component {
       .then(response => response.json())
       .then(data => {
         if (data.userId && data.success === true) {
+          this.saveAuthTokenInSession(data.token);
           fetch('http://localhost:3000/profile/' + data.userId, {
             method: 'get',
             headers: {'Content-Type': 'application/json', 'Authorization': data.token}
