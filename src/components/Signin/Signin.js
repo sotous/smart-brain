@@ -1,4 +1,5 @@
 import React from 'react';
+import getProfile from '../../helpers/getProfile';
 
 class Signin extends React.Component {
   constructor(props) {
@@ -7,6 +8,7 @@ class Signin extends React.Component {
       signInEmail: '',
       signInPassword: ''
     }
+    
   }
 
   onEmailChange = (event) => {
@@ -31,23 +33,17 @@ class Signin extends React.Component {
       })
     })
       .then(response => response.json())
-      .then(data => {
+      .then(async data => {
         if (data.userId && data.success === true) {
-          this.saveAuthTokenInSession(data.token);
-          fetch('http://localhost:3000/profile/' + data.userId, {
-            method: 'get',
-            headers: {'Content-Type': 'application/json', 'Authorization': data.token}
-          })
-          .then(response => response.json())
-          .then(user => {
-            if (user && user.email) {
-              this.props.loadUser(user)
-              this.props.onRouteChange('home');
-            }
-          })
-          .catch(console.log)
+          this.saveAuthTokenInSession(data.token)
+          const profile = await getProfile(data.userId);
+          if (profile && profile.email) {
+            this.props.loadUser(profile)
+            this.props.onRouteChange('home');
+          }
         }
       })
+      .catch(console.log)
   }
 
   render() {
