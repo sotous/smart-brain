@@ -10,6 +10,7 @@ import ImageLinkForm from './components/ImageLinkForm/ImageLinkForm';
 import Rank from './components/Rank/Rank';
 import Modal from './components/Modal/Modal';
 import Profile from './components/Profile/Profile';
+import getProfile from './helpers/getProfile';
 import './App.css';
 
 const initialState = {
@@ -45,20 +46,13 @@ class App extends Component {
         headers: {'Content-Type': 'application/json', 'Authorization': token},
       })
       .then(response => response.json())
-      .then(data => {
+      .then(async data => {
         if (data && data.id) {
-          fetch('http://localhost:3000/profile/' + data.id, {
-            method: 'get',
-            headers: {'Content-Type': 'application/json', 'Authorization': token}
-          })
-          .then(response => response.json())
-          .then(user => {
-            if (user && user.email) {
-              this.loadUser(user);
-              this.onRouteChange('home');
-            }
-          })
-          .catch(console.log)
+          const profile = await getProfile(data.id);
+          if (profile && profile.email) {
+            this.loadUser(profile);
+            this.onRouteChange('home');
+          }
         }
       })
       .catch(console.log)
