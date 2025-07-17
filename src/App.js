@@ -10,7 +10,8 @@ import ImageLinkForm from './components/ImageLinkForm/ImageLinkForm';
 import Rank from './components/Rank/Rank';
 import Modal from './components/Modal/Modal';
 import Profile from './components/Profile/Profile';
-import getProfile from './helpers/getProfile';
+import { getProfile } from './helpers/profile';
+import { isAuthenticated, removeAuthTokenFromSession } from './helpers/auth';
 import './App.css';
 
 const initialState = {
@@ -39,16 +40,10 @@ class App extends Component {
   }
 
   componentDidMount() {
-    const token = window.sessionStorage.getItem('token');
-    if (token) {
-      fetch('http://localhost:3000/signin', {
-        method: 'post',
-        headers: {'Content-Type': 'application/json', 'Authorization': token},
-      })
-      .then(response => response.json())
-      .then(async data => {
-        if (data && data.id) {
-          const profile = await getProfile(data.id);
+    isAuthenticated()
+      .then(async userId => {
+        if (userId) {
+          const profile = await getProfile(userId);
           if (profile && profile.email) {
             this.loadUser(profile);
             this.onRouteChange('home');
@@ -56,7 +51,6 @@ class App extends Component {
         }
       })
       .catch(console.log)
-    }
   }
 
   loadUser = (data) => {
@@ -131,7 +125,7 @@ class App extends Component {
 
   onRouteChange = (route) => {
     if (route === 'signout') {
-      window.sessionStorage.removeItem('token');
+      removeAuthTokenFromSession();
       this.setState(initialState)
     } else if (route === 'home') {
       this.setState({isSignedIn: true})
