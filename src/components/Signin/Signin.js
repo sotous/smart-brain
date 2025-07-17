@@ -1,5 +1,6 @@
 import React from 'react';
-import getProfile from '../../helpers/getProfile';
+import { getProfile } from '../../helpers/profile';
+import { signIn } from '../../helpers/auth';
 
 class Signin extends React.Component {
   constructor(props) {
@@ -19,31 +20,15 @@ class Signin extends React.Component {
     this.setState({signInPassword: event.target.value})
   }
 
-  saveAuthTokenInSession = (token) => {
-    window.sessionStorage.setItem('token', token);
-  };
-
-  onSubmitSignIn = () => {
-    fetch('http://localhost:3000/signin', {
-      method: 'post',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        email: this.state.signInEmail,
-        password: this.state.signInPassword
-      })
-    })
-      .then(response => response.json())
-      .then(async data => {
-        if (data.userId && data.success === true) {
-          this.saveAuthTokenInSession(data.token)
-          const profile = await getProfile(data.userId);
-          if (profile && profile.email) {
-            this.props.loadUser(profile)
-            this.props.onRouteChange('home');
-          }
-        }
-      })
-      .catch(console.log)
+  onSubmitSignIn = async () => {
+    const userId = await signIn(this.state.signInEmail, this.state.signInPassword);
+    if (userId) {
+      const profile = await getProfile(userId);
+      if (profile && profile.email) {
+        this.props.loadUser(profile)
+        this.props.onRouteChange('home');
+      }
+    }
   }
 
   render() {

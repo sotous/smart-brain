@@ -1,6 +1,6 @@
 import React from 'react';
-import getProfile from '../../helpers/getProfile';
-
+import { getProfile } from '../../helpers/profile';
+import { register } from '../../helpers/auth';
 class Register extends React.Component {
   constructor(props) {
     super(props);
@@ -23,31 +23,15 @@ class Register extends React.Component {
     this.setState({password: event.target.value})
   }
   
-  saveAuthTokenInSession = (token) => {
-    window.sessionStorage.setItem('token', token);
-  };
-
-  onSubmitSignIn = () => {
-    fetch('http://localhost:3000/register', {
-      method: 'post',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        email: this.state.email,
-        password: this.state.password,
-        name: this.state.name
-      })
-    })
-      .then(response => response.json())
-      .then(async data => {
-        if (data.userId && data.success === true) {
-          this.saveAuthTokenInSession(data.token);
-          const profile = await getProfile(data.userId);
-          if (profile && profile.email) {
-            this.props.loadUser(profile)
-            this.props.onRouteChange('home');
-          }
-        }
-      })
+  onSubmitRegister = async () => {
+    const userId = await register(this.state.email, this.state.password, this.state.name);
+    if (userId) {
+      const profile = await getProfile(userId);
+      if (profile && profile.email) {
+        this.props.loadUser(profile)
+        this.props.onRouteChange('home');
+      }
+    }
   }
 
   render() {
@@ -90,7 +74,7 @@ class Register extends React.Component {
             </fieldset>
             <div className="">
               <input
-                onClick={this.onSubmitSignIn}
+                onClick={this.onSubmitRegister}
                 className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib"
                 type="submit"
                 value="Register"
