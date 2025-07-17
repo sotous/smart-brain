@@ -1,6 +1,6 @@
 import React from 'react';
 import './Profile.css';
-
+import { updateProfile } from '../../helpers/profile';
 class Profile extends React.Component {
     constructor(props) {
         super(props);
@@ -27,20 +27,12 @@ class Profile extends React.Component {
         }
     }
 
-    onProfileUpdate = (data) => {
-        fetch(`http://localhost:3000/profile/${this.props.user.id}`, {
-            method: 'post',
-            headers: {'Content-Type': 'application/json', 'Authorization': window.sessionStorage.getItem('token')},
-            body: JSON.stringify({
-                formInput: data
-            })
-        })
-        .then(resp => {
-            if (resp.status === 200 || resp.status === 304) {
-                this.props.toggleModal();
-                this.props.loadUser({...this.props.user, ...data});
-            }
-        }).catch(console.log);
+    onProfileUpdate = async (data) => {
+        const response = await updateProfile(this.props.user.id, {formInput: data});
+        if (response.success === true) {
+            this.props.toggleModal();
+            this.props.loadUser({...this.props.user, ...data});
+        }
     };
 
     render() {
