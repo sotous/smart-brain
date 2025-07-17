@@ -10,9 +10,10 @@ import ImageLinkForm from './components/ImageLinkForm/ImageLinkForm';
 import Rank from './components/Rank/Rank';
 import Modal from './components/Modal/Modal';
 import Profile from './components/Profile/Profile';
-import { getProfile } from './helpers/profile';
+import { getProfile, updateEntries } from './helpers/profile';
 import { isAuthenticated, removeAuthTokenFromSession } from './helpers/auth';
 import './App.css';
+import { uploadImage } from './helpers/uploadImage';
 
 const initialState = {
   input: '',
@@ -92,35 +93,14 @@ class App extends Component {
     this.setState({input: event.target.value});
   }
 
-  onButtonSubmit = () => {
+  onButtonSubmit = async () => {
     this.setState({imageUrl: this.state.input});
-      fetch('http://localhost:3000/imageurl', {
-        method: 'post',
-        headers: {'Content-Type': 'application/json', 'Authorization': window.sessionStorage.getItem('token')},
-        body: JSON.stringify({
-          input: this.state.input
-        })
-      })
-      .then(response => response.json())
-      .then(response => {
-        if (response) {
-          fetch('http://localhost:3000/image', {
-            method: 'put',
-            headers: {'Content-Type': 'application/json', 'Authorization': window.sessionStorage.getItem('token')},
-            body: JSON.stringify({
-              id: this.state.user.id
-            })
-          })
-            .then(response => response.json())
-            .then(count => {
-              this.setState(Object.assign(this.state.user, { entries: count}))
-            })
-            .catch(console.log)
-
-        }
-        this.displayFaceBoxes(this.calculateFaceLocations(response))
-      })
-      .catch(err => console.log(err));
+    const uploadedImage = await uploadImage(this.state.input);
+    if (uploadedImage) {
+      const updatedEntries = await updateEntries(this.state.user.id);
+      this.setState(Object.assign(this.state.user, { entries: updatedEntries}))
+      this.displayFaceBoxes(this.calculateFaceLocations(uploadedImage))
+    }
   }
 
   onRouteChange = (route) => {
