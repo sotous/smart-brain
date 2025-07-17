@@ -45,8 +45,9 @@ const isAuthenticated = async () => {
         headers: {'Content-Type': 'application/json', 'Authorization': token},
     });
     const data = await response.json();
-    if (data.userId && data.success === true) {
-        return data.userId;
+    const userId = data.id;
+    if (userId) {
+        return userId;
     }
     return null;
 };
