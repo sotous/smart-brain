@@ -29,9 +29,9 @@ class Profile extends React.Component {
 
     onProfileUpdate = async (data) => {
         const response = await updateProfile(this.props.user.id, {formInput: data});
-        if (response.success === true) {
-            this.props.toggleModal();
+        if (response === "success") {
             this.props.loadUser({...this.props.user, ...data});
+            this.props.toggleModal();
         }
     };
 
