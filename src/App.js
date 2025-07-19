@@ -106,7 +106,7 @@ class App extends Component {
   onRouteChange = (route) => {
     if (route === 'signout') {
       removeAuthTokenFromSession();
-      this.setState(initialState)
+      this.setState(initialState);
     } else if (route === 'home') {
       this.setState({isSignedIn: true})
     }
@@ -119,6 +119,7 @@ class App extends Component {
 
   render() {
     const { isSignedIn, imageUrl, route, boxes, isProfileOpen, user } = this.state;
+    const isTransient = route === 'signin' || route === 'signout';
     return (
       <div className="App">
         <ParticlesBg type="cobweb" bg={true} />
@@ -131,8 +132,8 @@ class App extends Component {
             <Profile isProfileOpen={isProfileOpen} toggleModal={this.toggleModal} user={user} loadUser={this.loadUser}/>
           </Modal>
         )}
-        { route === 'home'
-          ? <div>
+        { route === 'home' && (
+           <div>
               <Logo />
               <Rank
                 name={this.state.user.name}
@@ -144,12 +145,14 @@ class App extends Component {
               />
               <FaceRecognition boxes={boxes} imageUrl={imageUrl} />
             </div>
-          : (
-             route === 'signin'
-             ? <Signin loadUser={this.loadUser} onRouteChange={this.onRouteChange}/>
-             : <Register loadUser={this.loadUser} onRouteChange={this.onRouteChange}/>
-            )
+          )
         }
+        { isTransient && (
+          <Signin loadUser={this.loadUser} onRouteChange={this.onRouteChange}/>
+        )}
+        { route === 'register' && (
+          <Register loadUser={this.loadUser} onRouteChange={this.onRouteChange}/>
+        )}
       </div>
     );
   }
