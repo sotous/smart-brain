@@ -29,8 +29,19 @@ const updateEntries = async (userId) => {
     return response.json();
 }
 
+const updateProfileImage = async (userId, formData) => {
+    const token = window.sessionStorage.getItem('token');
+    const response = await fetch("http://localhost:3000/profile/" + userId + "/profile-image", {
+        method: "post",
+        headers: {"Authorization": token},
+        body: formData
+    });
+    return response.json();
+}
+
 module.exports = {
     getProfile,
     updateProfile,
-    updateEntries
+    updateEntries,
+    updateProfileImage
 }
