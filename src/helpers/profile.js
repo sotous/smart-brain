@@ -40,11 +40,28 @@ const getProfileUploadUrl = async (file) => {
     });
     return response.json();
 };
+
+const updateProfileImage = async (uploadUrl, file) => {
+    const response = await fetch(uploadUrl, {
+        method: "put",
+        headers: {"Content-Type": file.type},
+        body: file
+    });
+
+    if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`Upload failed ${response.status}: ${text}`);
+    }
+
+    return {
+        status: "success"
+    };
 }
 
 module.exports = {
     getProfile,
     updateProfile,
     updateEntries,
-    updateProfileImage
+    updateProfileImage,
+    getProfileUploadUrl
 }
