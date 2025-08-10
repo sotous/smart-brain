@@ -29,14 +29,17 @@ const updateEntries = async (userId) => {
     return response.json();
 }
 
-const updateProfileImage = async (userId, formData) => {
-    const token = window.sessionStorage.getItem('token');
-    const response = await fetch("http://localhost:3000/profile/" + userId + "/profile-image", {
+const getProfileUploadUrl = async (file) => {
+    const response = await fetch(process.env.REACT_APP_IMAGE_UPLOAD_FUNCTION_URL, {
         method: "post",
-        headers: {"Authorization": token},
-        body: formData
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            fileName: file.name,
+            fileType: file.type,
+        })
     });
     return response.json();
+};
 }
 
 module.exports = {
