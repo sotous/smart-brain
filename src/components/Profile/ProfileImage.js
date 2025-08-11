@@ -1,6 +1,6 @@
 import React from 'react';
 import './ProfileImage.css';
-import { updateProfileImage } from '../../helpers/profile';
+import { updateProfileImage, getProfileUploadUrl } from '../../helpers/profile';
 
 class ProfileImage extends React.Component {
     constructor(props) {
