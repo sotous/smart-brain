@@ -25,7 +25,7 @@ class ProfileImage extends React.Component {
     render() {
         return (
         <div className="profile-image-container" onClick={this.handleImageClick}>
-            <img src="https://www.shutterstock.com/image-vector/vector-male-face-avatar-logo-600nw-426321556.jpg" className="br-100 h3 w3 dib" alt="avatar"/>
+            <img src={this.props.profilePic || "https://www.shutterstock.com/image-vector/vector-male-face-avatar-logo-600nw-426321556.jpg"} className="br-100 h3 w3 dib" alt="avatar"/>
             <div className="pencil-overlay">
                 <i className="fa fa-pencil"></i>
             </div>
