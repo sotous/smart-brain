@@ -48,7 +48,7 @@ class Profile extends React.Component {
             <div className="profile-modal">
                 <article className="br3 ba b--black-10 mv4 w-100 w-50-m w-25-l mw6 shadow-5 center bg-white">
                     <main className="pa4 black-80 w-80">
-                        <ProfileImage userId={user.id} />
+                        <ProfileImage userId={user.id} profilePic={profilePic} updateProfilePic={this.updateProfilePic}/>
                         <h1>{this.state.name}</h1>
                         <h4>Images Submitted: {user.entries}</h4>
                         <p>Member since: {new Date(user.joined).toLocaleDateString()}</p>
