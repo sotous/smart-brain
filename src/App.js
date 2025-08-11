@@ -29,7 +29,8 @@ const initialState = {
     entries: 0,
     joined: '',
     pet: '',
-    age: ''
+    age: '',
+    profilePic: ''
   }
 }
 
