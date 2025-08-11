@@ -37,6 +37,10 @@ class Profile extends React.Component {
         }
     };
 
+    updateProfilePic = (url) => {
+        this.setState({ profilePic: url });
+    }
+
     render() {
         const { user, toggleModal } = this.props;
         const { name, age, pet } = this.state;
