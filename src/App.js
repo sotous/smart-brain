@@ -127,7 +127,9 @@ class App extends Component {
         <Navigation 
           isSignedIn={isSignedIn} 
           onRouteChange={this.onRouteChange} 
-          toggleModal={this.toggleModal}/>
+          toggleModal={this.toggleModal}
+          profilePic={user.profilePic}
+        />
         {isProfileOpen && (
           <Modal>
             <Profile isProfileOpen={isProfileOpen} toggleModal={this.toggleModal} user={user} loadUser={this.loadUser}/>
