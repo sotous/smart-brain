@@ -15,10 +15,10 @@ class ProfileImage extends React.Component {
     handleFileChange = async (event) => {
         if (event.target.files && event.target.files[0]) {
             const file = event.target.files[0];
-            const formData = new FormData();
-            formData.append("profileImage", file);
-            const response = await updateProfileImage(this.props.userId, formData);
-            console.log(response);
+            const { uploadUrl, objectUrl } = await getProfileUploadUrl(file);
+
+            await updateProfileImage(uploadUrl, file);       
+            this.props.updateProfilePic(objectUrl);
         }
     };
 
