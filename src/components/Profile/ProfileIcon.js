@@ -28,7 +28,7 @@ class ProfileIcon extends React.Component {
                         data-toggle="dropdown"
                         tag="span"
                     >
-                        <img src="https://www.shutterstock.com/image-vector/vector-male-face-avatar-logo-600nw-426321556.jpg" className="br-100 h3 w3 dib" alt="avatar"/>
+                        <img src={this.props.profilePic || "https://www.shutterstock.com/image-vector/vector-male-face-avatar-logo-600nw-426321556.jpg"} className="br-100 h3 w3 dib" alt="avatar"/>
                     </DropdownToggle>
                     <DropdownMenu 
                         className="b--transparent shadow-5" 
