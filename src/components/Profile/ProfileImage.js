@@ -34,7 +34,7 @@ class ProfileImage extends React.Component {
                 ref={this.fileInputRef} 
                 onChange={this.handleFileChange} 
                 style={{ display: 'none' }} 
-                accept="image/*"
+                accept="image/png, image/jpeg, image/jpg, image/gif, image/webp, image/svg"
             />
         </div>
         );
