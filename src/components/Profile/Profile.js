@@ -10,6 +10,7 @@ class Profile extends React.Component {
             name: this.props.user.name,
             age: this.props.user.age,
             pet: this.props.user.pet,
+            profilePic: this.props.user.profilePic
         }
     }
 
@@ -43,7 +44,7 @@ class Profile extends React.Component {
 
     render() {
         const { user, toggleModal } = this.props;
-        const { name, age, pet } = this.state;
+        const { name, age, pet, profilePic } = this.state;
         return (
             <div className="profile-modal">
                 <article className="br3 ba b--black-10 mv4 w-100 w-50-m w-25-l mw6 shadow-5 center bg-white">
@@ -81,7 +82,7 @@ class Profile extends React.Component {
                             id="pet"
                         />
                         <div className='mt4' style={{display: 'flex', justifyContent: 'space-evenly'}}>
-                            <button className='w-40 grow f4 link dim black ph3 pv2 mb2 dib' onClick={() => this.onProfileUpdate({name, age, pet})}>Save</button>   
+                            <button className='w-40 grow f4 link dim black ph3 pv2 mb2 dib' onClick={() => this.onProfileUpdate({name, age, pet, profilePic})}>Save</button>   
                             <button className='w-40 grow f4 link dim black ph3 pv2 mb2 dib' onClick={toggleModal}>Cancel</button>
                         </div>
                     </main>
