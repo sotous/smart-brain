@@ -63,7 +63,8 @@ class App extends Component {
       entries: data.entries,
       joined: data.joined,
       pet: data.pet,
-      age: data.age
+      age: data.age,
+      profilePic: data.profilePic ?? data.profile_pic
     }})
   }
 
